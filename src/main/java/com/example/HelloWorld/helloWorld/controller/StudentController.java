@@ -45,78 +45,76 @@ public class StudentController {
     @Autowired
     PasswordEncoder bCryptPasswordEncoder;
 
-    boolean canRegister(int classid){
-      int subject_id =  classService.getClassByClassId(classid).getSubject().getSubject_id();
+    boolean canRegister(int classid) {
+        int subject_id = classService.getClassByClassId(classid).getSubject().getSubject_id();
         return transcriptService.findByUser_id(currentUser.getCurrentUSer().getUser_id())
                 .stream()
-                .filter(t -> t.getAClass().getSubject().getSubject_id()== subject_id)
+                .filter(t -> t.getAClass().getSubject().getSubject_id() == subject_id)
                 .collect(Collectors.toList()).isEmpty();
     }
 
-
-
     @GetMapping("")
-    public String user(Model model){
-        model.addAttribute("fullname",currentUser.getCurrentUSer().getUser_full_name());
+    public String user(Model model) {
+        model.addAttribute("fullname", currentUser.getCurrentUSer().getUser_full_name());
         return "/student/user-home-page";
     }
 
     @GetMapping("/getTranscript")
-    public String getTranscript(Model model){
+    public String getTranscript(Model model) {
         List<Transcript> list = transcriptService.findByUser_id(currentUser.getCurrentUSer().getUser_id());
-        model.addAttribute("list",list);
+        model.addAttribute("list", list);
         return "/student/transcript";
     }
 
 
     @GetMapping("/registerForStudying")
-    public String registerForStudying(Model model, @RequestParam(name = "status",required = false,defaultValue = "")  String status ){
+    public String registerForStudying(Model model, @RequestParam(name = "status", required = false, defaultValue = "") String status) {
 
-        if(!status.isEmpty()){
-        model.addAttribute("status",status);
+        if (!status.isEmpty()) {
+            model.addAttribute("status", status);
         }
-        model.addAttribute("list",classService.getAllClass().stream().
+        model.addAttribute("list", classService.getAllClass().stream().
                 filter(c -> c.getStatus().equals(Status.DANG_DANG_KI))
                 .collect(Collectors.toList()));
         return "/student/register-for-studying";
     }
 
     @GetMapping("/registerForStudying/{ClassId}")
-    public String submitregister(Model model, @PathVariable(name = "ClassId") int ClassId){
-        if(canRegister(ClassId)){
-            transcriptService.addTranscript(new Transcript(currentUser.getCurrentUSer(),ClassId));
+    public String submitregister(Model model, @PathVariable(name = "ClassId") int ClassId) {
+        if (canRegister(ClassId)) {
+            transcriptService.addTranscript(new Transcript(currentUser.getCurrentUSer(), ClassId));
             classService.updateClassSize(ClassId);
-            return registerForStudying(model,"true");
+            return registerForStudying(model, "true");
         }
-        return registerForStudying(model,"false");
+        return registerForStudying(model, "false");
 
     }
 
     @GetMapping("/classTranscript/{ClassId}")
-    public String classTranscript(Model model,@PathVariable(name = "ClassId") int CLassId){
+    public String classTranscript(Model model, @PathVariable(name = "ClassId") int CLassId) {
         List<Transcript> list = transcriptService.findByClass_id(CLassId);
-        model.addAttribute("list",list);
+        model.addAttribute("list", list);
         return "/student/class-transcript";
     }
 
     @GetMapping("/personalInformation")
-    public String getPersonalInfor(Model model){
-        model.addAttribute("user",currentUser.getCurrentUSer());
+    public String getPersonalInfor(Model model) {
+        model.addAttribute("user", currentUser.getCurrentUSer());
         System.out.println(currentUser.getCurrentUSer().getImagePath());
 
         return "/student/user-infor";
     }
 
     @GetMapping("/editInfor/{UserId}")
-    public String getEditForm(Model model,@PathVariable(name = "UserId") int UserId){
-        model.addAttribute("user",currentUser.getCurrentUSer());
+    public String getEditForm(Model model, @PathVariable(name = "UserId") int UserId) {
+        model.addAttribute("user", currentUser.getCurrentUSer());
         return "/student/edit-form";
     }
 
     @PostMapping("/submitedit")
-    public String sunmitedit( @ModelAttribute User user, Model model, @RequestPart(name = "img",required = false)MultipartFile img){
+    public String sunmitedit(@ModelAttribute User user, Model model, @RequestPart(name = "img", required = false) MultipartFile img) {
 
-        if(!img.isEmpty()){
+        if (!img.isEmpty()) {
             user.setImage(img.getOriginalFilename());
             try {
                 FileCopyUtils.copy(img.getBytes()
@@ -130,24 +128,25 @@ public class StudentController {
     }
 
     @GetMapping("/changePassword")
-    public String changepw(Model model,@RequestParam(name = "status",required = false) String status){
-        model.addAttribute("status",status);
+    public String changepw(Model model, @RequestParam(name = "status", required = false) String status) {
+        model.addAttribute("status", status);
         return "/student/student-change-password";
     }
+
     @PostMapping("/changePassword")
-    public String changePassword(@RequestParam(name = "oldpassword",required = true) String oldpassword
-            ,@RequestParam String newpassword
-    ,RedirectAttributes redirectAttributes){
+    public String changePassword(@RequestParam(name = "oldpassword", required = true) String oldpassword
+            , @RequestParam String newpassword
+            , RedirectAttributes redirectAttributes) {
         User user = currentUser.getCurrentUSer();
-        if(newpassword.isEmpty()){
-            redirectAttributes.addAttribute("status","blank");
+        if (newpassword.isEmpty()) {
+            redirectAttributes.addAttribute("status", "blank");
             return "redirect:/student/changePassword";
         }
-        if(bCryptPasswordEncoder.matches(oldpassword,user.getPassword())){
+        if (bCryptPasswordEncoder.matches(oldpassword, user.getPassword())) {
             userService.updatePassword(bCryptPasswordEncoder.encode(newpassword));
-            redirectAttributes.addAttribute("status","success");
-        }else{
-            redirectAttributes.addAttribute("status","failed");
+            redirectAttributes.addAttribute("status", "success");
+        } else {
+            redirectAttributes.addAttribute("status", "failed");
         }
         System.out.println(currentUser.getCurrentUSer().getPassword());
 

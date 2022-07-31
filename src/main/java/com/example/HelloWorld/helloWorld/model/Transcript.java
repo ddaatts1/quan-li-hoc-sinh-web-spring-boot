@@ -28,12 +28,12 @@ public class Transcript {
     @ManyToOne
     @JoinColumn(name = "user_id")
     User student;
-    @Max(value = 10,message = "điểm không được quá 10!")
-     @Min(value = 0,message = "điểm không được dưới 0!")
+    @Max(value = 10, message = "điểm không được quá 10!")
+    @Min(value = 0, message = "điểm không được dưới 0!")
     int mark1;
 
-    @Max(value = 10,message = "điểm không được quá 10!")
-    @Min(value = 0,message = "điểm không được dưới 0!")
+    @Max(value = 10, message = "điểm không được quá 10!")
+    @Min(value = 0, message = "điểm không được dưới 0!")
     int mark2;
 
     public Transcript(User user, int classid) {

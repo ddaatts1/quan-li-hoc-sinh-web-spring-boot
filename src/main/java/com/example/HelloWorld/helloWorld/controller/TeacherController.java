@@ -35,86 +35,84 @@ public class TeacherController {
     @Autowired
     TranscriptService transcriptService;
 
-    User getCurrentUser(){
+    User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         return userService.getUserByName(authentication.getName());
     }
 
 
     @GetMapping("")
-    public String admin(Model model, HttpSession session){
+    public String admin(Model model, HttpSession session) {
         User user = (User) session.getAttribute(getCurrentUser().getUsername());
-        model.addAttribute("username",user.getUser_full_name());
+        model.addAttribute("username", user.getUser_full_name());
         return "/teacher/teacher-home-page";
     }
 
     @GetMapping("/registerForTeaching")
-    public String registerForTeaching(Model model){
-        model.addAttribute("list",subjectService.getList());
+    public String registerForTeaching(Model model) {
+        model.addAttribute("list", subjectService.getList());
         return "/teacher/register-for-teaching";
     }
 
     @GetMapping("/registerForTeaching/{SubjectId}")
-    public String submit(@PathVariable(name = "SubjectId") int SubjectId,Model model){
-        Class newClass = new Class(getCurrentUser(),subjectService.getById(SubjectId));
+    public String submit(@PathVariable(name = "SubjectId") int SubjectId, Model model) {
+        Class newClass = new Class(getCurrentUser(), subjectService.getById(SubjectId));
         classService.addClass(newClass);
         return registerForTeaching(model);
-        }
+    }
 
     @GetMapping("/manageClass")
-    public String manageClass(Model model){
-        model.addAttribute("list",classService.getClassById(getCurrentUser().getUser_id()));
+    public String manageClass(Model model) {
+        model.addAttribute("list", classService.getClassById(getCurrentUser().getUser_id()));
         return "/teacher/manageClass";
     }
 
     @GetMapping("/closeClass/{ClassId}")
-    public String closeClass(@PathVariable(name = "ClassId") int ClassId,Model model){
+    public String closeClass(@PathVariable(name = "ClassId") int ClassId, Model model) {
         classService.closeCLass(ClassId);
         return manageClass(model);
     }
 
     @GetMapping("/insertMark")
-    public String getListClass(Model model){
-        model.addAttribute("list",classService.getClassById(getCurrentUser().getUser_id())
+    public String getListClass(Model model) {
+        model.addAttribute("list", classService.getClassById(getCurrentUser().getUser_id())
                 .stream()
-                .filter(c->c.getStatus().equals(Status.DANG_HOC))
+                .filter(c -> c.getStatus().equals(Status.DANG_HOC))
                 .collect(Collectors.toList()));
 
         return "/teacher/myClass";
     }
 
     @GetMapping("/insertMark/{ClassId}")
-    public String insertMark(Model model,@PathVariable(name = "ClassId") int ClassId,@RequestParam(name = "status",required = false,defaultValue = "") String status){
-        if( status.equals("true")){
-           model.addAttribute("status","bảng điểm đã được cập nhật!");
+    public String insertMark(Model model, @PathVariable(name = "ClassId") int ClassId, @RequestParam(name = "status", required = false, defaultValue = "") String status) {
+        if (status.equals("true")) {
+            model.addAttribute("status", "bảng điểm đã được cập nhật!");
         }
         ListTranscript list = new ListTranscript(transcriptService.findByClass_id(ClassId));
-        model.addAttribute("ClassId",ClassId);
-        model.addAttribute("listTranscript",list);
+        model.addAttribute("ClassId", ClassId);
+        model.addAttribute("listTranscript", list);
         return "/teacher/insertMark";
     }
+
     @PostMapping("/insertMark/{ClassId}")
     public String submitTranscript(Model model
-                                   , @PathVariable int ClassId
+            , @PathVariable int ClassId
             , @Valid @ModelAttribute ListTranscript listTranscript
             , BindingResult bindingResult
-    , RedirectAttributes redirectAttributes)  {
+            , RedirectAttributes redirectAttributes) {
 
-        if (bindingResult.hasErrors()){
+        if (bindingResult.hasErrors()) {
             System.out.println("--------------------co loi");
             ListTranscript list = new ListTranscript(transcriptService.findByClass_id(ClassId));
-            model.addAttribute("ClassId",ClassId);
-            model.addAttribute("listTranscript",listTranscript);
+            model.addAttribute("ClassId", ClassId);
+            model.addAttribute("listTranscript", listTranscript);
             return "/teacher/insertMark";
 
         }
-        transcriptService.submitTranscript(listTranscript,ClassId);
-        return insertMark(model,ClassId,"true");
+        transcriptService.submitTranscript(listTranscript, ClassId);
+        return insertMark(model, ClassId, "true");
 
     }
-
-
-
 
 
 }

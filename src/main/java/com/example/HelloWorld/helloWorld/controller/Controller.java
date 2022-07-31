@@ -25,7 +25,7 @@ public class Controller {
     UserService userService;
 
     @GetMapping("/")
-    public String index(){
+    public String index() {
         return "redirect:/login";
     }
 
@@ -35,10 +35,10 @@ public class Controller {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         User user = userService.getUserByName(authentication.getName());
         session.setAttribute(authentication.getName(), user);
-        if(user.getRole().equals("STUDENT")){
+        if (user.getRole().equals("STUDENT")) {
             return "redirect:/student";
         }
         return "redirect:/teacher";
-        
+
     }
 }

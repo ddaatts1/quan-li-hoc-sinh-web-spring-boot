@@ -19,6 +19,6 @@ public class Subject {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     int subject_id;
     String subject_name;
-    @OneToMany (mappedBy = "subject")
+    @OneToMany(mappedBy = "subject")
     List<Class> classList;
 }

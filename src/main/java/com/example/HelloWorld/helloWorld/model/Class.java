@@ -32,13 +32,13 @@ public class Class {
     List<Transcript> transcriptList;
 
     public Class(User teacher, Subject subject) {
-        size =0;
-        status=Status.DANG_DANG_KI;
+        size = 0;
+        status = Status.DANG_DANG_KI;
         this.teacher = teacher;
         this.subject = subject;
     }
 
-    public void updateSize(){
+    public void updateSize() {
         this.size++;
     }
 }

@@ -1,42 +1,52 @@
 <!DOCTYPE html>
 <html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
 <head>
-    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
-    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js" integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js" integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q" crossorigin="anonymous"></script>
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js" integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css"
+          integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.2.1.slim.min.js"
+            integrity="sha384-KJ3o2DKtIkvYIK3UENzmM7KCkRr/rE9/Qpg6aAZGJwFDMVNA/GpGFF93hXpG5KkN"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.12.9/dist/umd/popper.min.js"
+            integrity="sha384-ApNbgh9B+Y1QKtv3Rn7W3mgPxhU9K/ScQsAP7hUibX39j7fakFPskvXusvfa0b4Q"
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/js/bootstrap.min.js"
+            integrity="sha384-JZR6Spejh4U02d8jOt6vLEHfe/JQGiRRSQQxSfFWpi1MquVdAyjUar5+76PVCmYl"
+            crossorigin="anonymous"></script>
     <meta charset="UTF-8">
     <title>register for studying</title>
 </head>
 <body>
 <nav th:replace="/fragment/student_nav_bar :: studentNavBar"></nav>
-    <div th:if="${status=='true'}"  class="alert alert-success" role="alert">
-        <span>Đăng kí thành công!</span>
-    </div>
+<div th:if="${status=='true'}" class="alert alert-success" role="alert">
+    <span>Đăng kí thành công!</span>
+</div>
 
-    <div th:if="${status=='false'}" class="alert alert-danger" role="alert">
-        <span>Bạn đã đăng kí môn này!</span>
-    </div>
-    <table class="table table-striped">
-        <thead>
-        <tr>
-            <th scope="col">#</th>
-            <th scope="col">class name</th>
-            <th scope="col">teacher</th>
-            <th scope="col">amount</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="class: ${list}">
-            <th scope="row" th:text="${class.getClass_id()}" ></th>
-            <td th:text="${class.getSubject().getSubject_name()}"></td>
-            <td th:text="${class.getTeacher().getUser_full_name()}"></td>
-            <td th:text="${class.getSize()}"></td>
-            <td><button class="btn btn-light" > <a th:href="@{/student/registerForStudying/{ClassId}(ClassId = ${class.getClass_id()})}">Đăng kí</a></button>
-            </td>
-        </tr>
-        </tbody>
-    </table>
+<div th:if="${status=='false'}" class="alert alert-danger" role="alert">
+    <span>Bạn đã đăng kí môn này!</span>
+</div>
+<table class="table table-striped">
+    <thead>
+    <tr>
+        <th scope="col">#</th>
+        <th scope="col">class name</th>
+        <th scope="col">teacher</th>
+        <th scope="col">amount</th>
+    </tr>
+    </thead>
+    <tbody>
+    <tr th:each="class: ${list}">
+        <th scope="row" th:text="${class.getClass_id()}"></th>
+        <td th:text="${class.getSubject().getSubject_name()}"></td>
+        <td th:text="${class.getTeacher().getUser_full_name()}"></td>
+        <td th:text="${class.getSize()}"></td>
+        <td>
+            <button class="btn btn-light"><a
+                    th:href="@{/student/registerForStudying/{ClassId}(ClassId = ${class.getClass_id()})}">Đăng kí</a>
+            </button>
+        </td>
+    </tr>
+    </tbody>
+</table>
 
 </body>
 </html>

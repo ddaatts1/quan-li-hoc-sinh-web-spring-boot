@@ -12,5 +12,5 @@ import java.util.List;
 @AllArgsConstructor
 public class ListTranscript {
     @Valid
-    List< Transcript> list;
+    List<Transcript> list;
 }

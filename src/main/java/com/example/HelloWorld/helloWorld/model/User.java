@@ -29,16 +29,16 @@ public class User {
     String image;
 
     @Transient
-    public String getImagePath(){
-        String path = "/image/"+image;
+    public String getImagePath() {
+        String path = "/image/" + image;
 
         return path;
     }
 
-    @OneToMany(mappedBy = "teacher",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "teacher", fetch = FetchType.LAZY)
     List<Class> classList;
 
-    @OneToMany(mappedBy = "student",fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "student", fetch = FetchType.LAZY)
     List<Transcript> transcriptList;
 
     public void setUser(User user) {

@@ -11,37 +11,37 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 
 @Service
-public class UserServiceImpl implements UserService{
+public class UserServiceImpl implements UserService {
 
     @Autowired
     UserRepository userRepository;
 
     @Override
-    public List<User> getuser(){
+    public List<User> getuser() {
         return userRepository.findAll();
     }
 
     @Override
-    public User getUserByName(String username){
+    public User getUserByName(String username) {
         return userRepository.findByUsername(username);
     }
 
     @Override
-    public void updateUser(User user){
+    public void updateUser(User user) {
         User updateUser = userRepository.findByUsername(user.getUsername());
         updateUser.setUsername(user.getUsername());
         updateUser.setAddress(user.getAddress());
         updateUser.setEmail(user.getEmail());
         updateUser.setPhone(user.getPhone());
-        if (user.getImage()!=null)
-        updateUser.setImage(user.getImage());
+        if (user.getImage() != null)
+            updateUser.setImage(user.getImage());
         userRepository.save(updateUser);
     }
 
     @Override
-    public void updatePassword(String password){
+    public void updatePassword(String password) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        User user= userRepository.findByUsername(authentication.getName());
+        User user = userRepository.findByUsername(authentication.getName());
         user.setPassword(password);
         userRepository.save(user);
     }
