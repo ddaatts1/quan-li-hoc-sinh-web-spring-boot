@@ -1,0 +1,1 @@
+create table user (user_id integer not null auto_increment, ahihi integer not null, password varchar(255), role varchar(255), user_full_name varchar(255), user_name varchar(255), primary key (user_id)) engine=InnoDB;

@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="">
+<head>
+    <meta charset="UTF-8">
+    <title>Title</title>
+</head>
+<body>
+<!--teacher nav bar-->
+
+<nav th:fragment="teacherNavBar" class="navbar navbar-expand-lg navbar-light bg-light" >
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+
+  <div class="collapse navbar-collapse" id="navbarSupportedContent">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item active">
+        <a class="nav-link" th:href="@{/teacher/registerForTeaching}">Đăng kí dạy học <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" th:href="@{/teacher/manageClass}">Danh sách lớp dạy <span class="sr-only">(current)</span></a>
+      </li>
+      <li class="nav-item active">
+        <a class="nav-link" th:href="@{/teacher/insertMark}">Nhập điểm <span class="sr-only">(current)</span></a>
+      </li>
+
+    </ul>
+    <a class="navbar-brand" th:text="${username}"></a>
+
+    <button class="btn btn-outline-success my-2 my-sm-0" ><a th:href="@{/logout}">Logout</a></button>
+
+  </div>
+</nav>
+
+</body>
+</html>

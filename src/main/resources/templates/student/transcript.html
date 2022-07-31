@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.w3.org/1999/xhtml">
+<head>
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@4.0.0/dist/css/bootstrap.min.css" integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+
+    <meta charset="UTF-8">
+    <title>register for teaching</title>
+</head>
+<body>
+<nav th:replace="/fragment/student_nav_bar :: studentNavBar"></nav>
+<td><button class="btn btn-light" > <a th:href="@{/student}">dashboard</a></button>
+
+    <table class="table table-striped">
+        <thead>
+        <tr>
+            <th scope="col">#</th>
+            <th scope="col">subject name</th>
+            <th scope="col">mark 1</th>
+            <th scope="col">mark 2</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="transcript: ${list}">
+            <th scope="row" th:text="${transcript.getTranscript_id()}" ></th>
+            <td >
+                <a th:href="@{/student/classTranscript/{ClassId}(ClassId= ${transcript.getAClass().getClass_id()})}" th:text="${transcript.getAClass().getSubject().getSubject_name()}"></a>
+            </td>
+            <td th:text="${transcript.getMark1()}"></td>
+            <td th:text="${transcript.getMark2()}"></td>
+            </td>
+        </tr>
+        </tbody>
+    </table>
+
+</body>
+</html>
