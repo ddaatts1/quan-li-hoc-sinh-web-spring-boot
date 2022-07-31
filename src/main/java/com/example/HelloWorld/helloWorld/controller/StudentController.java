@@ -14,6 +14,8 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.ApplicationContext;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.util.FileCopyUtils;
@@ -40,6 +42,8 @@ public class StudentController {
     CurrentUser currentUser;
     @Value("${file.path}")
     String path;
+    @Autowired
+    PasswordEncoder bCryptPasswordEncoder;
 
     boolean canRegister(int classid){
       int subject_id =  classService.getClassByClassId(classid).getSubject().getSubject_id();
@@ -112,17 +116,42 @@ public class StudentController {
     @PostMapping("/submitedit")
     public String sunmitedit( @ModelAttribute User user, Model model, @RequestPart(name = "img",required = false)MultipartFile img){
 
-        user.setImage(img.getOriginalFilename());
-        try {
-            FileCopyUtils.copy(img.getBytes()
-                    , new File(path + img.getOriginalFilename()));
-        } catch (IOException e) {
-            e.printStackTrace();
+        if(!img.isEmpty()){
+            user.setImage(img.getOriginalFilename());
+            try {
+                FileCopyUtils.copy(img.getBytes()
+                        , new File(path + img.getOriginalFilename()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
         }
-
         userService.updateUser(user);
-
         return getPersonalInfor(model);
+    }
+
+    @GetMapping("/changePassword")
+    public String changepw(Model model,@RequestParam(name = "status",required = false) String status){
+        model.addAttribute("status",status);
+        return "/student/student-change-password";
+    }
+    @PostMapping("/changePassword")
+    public String changePassword(@RequestParam(name = "oldpassword",required = true) String oldpassword
+            ,@RequestParam String newpassword
+    ,RedirectAttributes redirectAttributes){
+        User user = currentUser.getCurrentUSer();
+        if(newpassword.isEmpty()){
+            redirectAttributes.addAttribute("status","blank");
+            return "redirect:/student/changePassword";
+        }
+        if(bCryptPasswordEncoder.matches(oldpassword,user.getPassword())){
+            userService.updatePassword(bCryptPasswordEncoder.encode(newpassword));
+            redirectAttributes.addAttribute("status","success");
+        }else{
+            redirectAttributes.addAttribute("status","failed");
+        }
+        System.out.println(currentUser.getCurrentUSer().getPassword());
+
+        return "redirect:/student/changePassword";
     }
 
 

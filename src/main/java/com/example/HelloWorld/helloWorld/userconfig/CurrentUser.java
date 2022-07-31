@@ -19,6 +19,6 @@ public class CurrentUser {
 
     public String getCurrnetUserName(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        return userService.getUserByName(authentication.getName()).getUsername();
+        return authentication.getName();
     }
 }

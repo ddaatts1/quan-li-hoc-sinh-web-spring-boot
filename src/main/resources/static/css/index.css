@@ -17,3 +17,12 @@ padding-top:40px
 img{
 border-radius: 50%;
 }
+
+.changepw{
+  display: flex;
+    margin-top:20px;
+  justify-content: center;
+}
+#box{
+  width: 700px;
+}
