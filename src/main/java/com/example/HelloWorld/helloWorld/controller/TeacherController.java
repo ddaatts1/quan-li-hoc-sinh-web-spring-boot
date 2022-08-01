@@ -7,20 +7,24 @@ import com.example.HelloWorld.helloWorld.service.SubjectService;
 import com.example.HelloWorld.helloWorld.service.TranscriptService;
 import com.example.HelloWorld.helloWorld.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.FileCopyUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.web.servlet.mvc.support.RedirectAttributes;
-import org.springframework.web.servlet.view.RedirectView;
 
 import javax.servlet.http.HttpSession;
 import javax.validation.Valid;
-import java.util.ArrayList;
-import java.util.List;
+import java.io.File;
+import java.io.IOException;
+
 import java.util.stream.Collectors;
 
 @Controller
@@ -34,6 +38,10 @@ public class TeacherController {
     ClassService classService;
     @Autowired
     TranscriptService transcriptService;
+    @Value("${file.path}")
+    String path;
+    @Autowired
+    PasswordEncoder passwordEncoder;
 
     User getCurrentUser() {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -111,7 +119,60 @@ public class TeacherController {
         }
         transcriptService.submitTranscript(listTranscript, ClassId);
         return insertMark(model, ClassId, "true");
+    }
 
+    @GetMapping("personalInformation")
+    public String personalinfor(Model model) {
+        model.addAttribute("user", getCurrentUser());
+        return "/teacher/teacher-infor";
+    }
+
+    @GetMapping("/editInfor/{UserId}")
+    public String getformedit(Model model, @PathVariable int UserId) {
+        model.addAttribute("user", getCurrentUser());
+
+        return "/teacher/edit-form";
+    }
+
+    @PostMapping("/submitedit")
+    public String submitedit(Model model, @ModelAttribute User user, @RequestParam(name = "img", required = false) MultipartFile img) {
+        if (!img.isEmpty()) {
+            user.setImage(img.getOriginalFilename());
+            try {
+                FileCopyUtils.copy(img.getBytes()
+                        , new File(path + img.getOriginalFilename()));
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+        userService.updateUser(user);
+        return personalinfor(model);
+    }
+
+    @GetMapping("/changePassword")
+    public String changepw(Model model, @RequestParam(name = "status", required = false) String status) {
+        model.addAttribute("status", status);
+        return "/teacher/teacher-change-password";
+    }
+
+    @PostMapping("/changePassword")
+    public String changePassword(@RequestParam(name = "oldpassword", required = true) String oldpassword
+            , @RequestParam String newpassword
+            , RedirectAttributes redirectAttributes) {
+        User user = getCurrentUser();
+        if (newpassword.isEmpty()) {
+            redirectAttributes.addAttribute("status", "blank");
+            return "redirect:/teacher/changePassword";
+        }
+        if (passwordEncoder.matches(oldpassword, user.getPassword())) {
+            userService.updatePassword(passwordEncoder.encode(newpassword));
+            redirectAttributes.addAttribute("status", "success");
+        } else {
+            redirectAttributes.addAttribute("status", "failed");
+        }
+        System.out.println(getCurrentUser().getPassword());
+
+        return "redirect:/teacher/changePassword";
     }
 
 

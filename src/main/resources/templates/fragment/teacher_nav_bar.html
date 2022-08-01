@@ -26,6 +26,16 @@
                 <a class="nav-link" th:href="@{/teacher/insertMark}">Nhập điểm <span
                         class="sr-only">(current)</span></a>
             </li>
+            <li class="nav-item dropdown">
+                <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+                   aria-haspopup="true" aria-expanded="false">
+                    Cá nhân
+                </a>
+                <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+                    <a class="dropdown-item" th:href="@{/teacher/personalInformation}">Thông tin cá nhân</a>
+                    <a class="dropdown-item" th:href="@{/teacher/changePassword}">Đổi mật khẩu</a>
+                </div>
+            </li>
 
         </ul>
         <a class="navbar-brand" th:text="${username}"></a>
